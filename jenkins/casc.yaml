@@ -1,0 +1,44 @@
+# This file contains Jenkins automatic initial setup
+jenkins:
+  systemMessage: 'Automating Jenkins Setup using Jenkins Configuration as Code'
+# Setting up default admin user to protect Jenkins from unauthorized access
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+       - id: ${JKS_ID}
+         password: ${JKS_PWD}
+# Configuring global permissions for admin users
+  authorizationStrategy:
+      globalMatrix:
+        permissions:
+          - 'USER:Overall/Administer:admin'
+          - 'GROUP:Overall/Read:authenticated'
+# Enabling Agent to Controller Access Control (it controls which commands and files
+# provided by controllers agents can access to execute jobs)
+  remotingSecurity:
+    enabled: true
+# Configuring that jobs can be defined and run only by users that configured or triggered them
+security:
+  queueItemAuthenticator:
+    authenticators:
+    - global:
+        strategy: triggeringUsersAuthorizationStrategy
+unclassified:
+# Stating Jenkins URL address to provide access to it via web browser
+  location:
+    url: http://localhost:8080/
+# Providing seed job that sets up connection to Github project
+jobs:
+  - file: /usr/local/seedjob.groovy
+# Providing AWS credentials to deploy artifacts to S3 bucket
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+        - aws:
+              scope: GLOBAL
+              id: "aws_credentials"
+              accessKey: "${AWS_ACCESS_KEY}"
+              secretKey: "${AWS_SECRET_ACCESS_KEY}"
+              description: "AWS Credentials"

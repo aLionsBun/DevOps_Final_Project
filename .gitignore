@@ -1,0 +1,12 @@
+# Ignore folder with private ssh key
+ssh/
+
+# Ignore .tfvar files with private information
+terraform/*.tfvars
+
+# Ignore plan folder with terraform build plan
+terraform/plan/
+
+# Ignore Terraform system files
+.terraform*
+terraform.tfstate*
